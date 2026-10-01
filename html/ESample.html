@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html>
+<HEAD>
+<!-- 2020/5/22 for Windows mNHIICC 1.0.6.0  Ver 0006 -->
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<TITLE>NHIICC</TITLE>
+</HEAD>
+<BODY>
+<style>
+#chat { width: 97%; }
+.message { font-weight: bold; }
+.message:before { content: ' '; color: #bbb; font-size: 14px; }
+#log {
+  overflow: auto;
+  max-height: 300px;
+  list-style: none;
+  padding: 0;
+}
+#log li {
+  border-top: 1px solid #ccc;
+  margin: 0;
+  padding: 10px 0;
+}
+body { 
+  font: normal 16px/20px "Helvetica Neue", Helvetica, sans-serif;
+  background: rgb(237, 237, 236);
+  margin: 0;
+  margin-top: 40px;
+  padding: 0;
+}
+
+section, header {
+  display: block;
+}
+
+#wrapper {
+  width: 600px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 10px;
+  border-top: 1px solid #fff;
+  padding-bottom: 16px;
+}
+
+h1 {
+  padding-top: 10px;
+}
+
+h2 {
+  font-size: 100%;
+  font-style: italic;
+}
+
+header,
+article > * {
+  margin: 20px;
+}
+
+#status {
+  padding: 5px;
+  color: #fff;
+  background: #ccc;
+}
+
+#status.fail {
+  background: #c00;
+}
+
+#status.success {
+  background: #0c0;
+}
+
+#status.offline {
+  background: #c00;
+}
+
+#status.online {
+  background: #0c0;
+}
+
+#html5badge {
+  margin-left: -30px;
+  border: 0;
+}
+
+#html5badge img {
+  border: 0;
+}
+</style>
+
+<form action="" method="post" id="myform" name="myform">
+<table border="1">
+<tr>
+<td>browserType</td>
+<td id="browserType"></td>
+</tr>
+<tr>
+<td>platform</td>
+<td id="platform"></td>
+</tr>
+<tr>
+<td>wsSupport</td>
+<td id="wsSupport">
+<img src="img/clear.png" id="wsSupportImg" alt="" width="25" height="25" border="0">
+</td>
+</tr>
+<tr>
+<td>GetBasic</td>
+<td colspan="2">
+<button type="button" onclick="ws_GetBasic();">Click Me!</button>
+</td>
+</tr>
+<tr>
+<td>GetRandom</td>
+<td colspan="2">
+<button type="button" onclick="ws_GetRandom();">Click Me!</button>
+<input type="text" id="TextBox_Random" name="TextBox_Random" value="">
+</td>
+</tr>
+<tr>
+<td>GetVersion</td>
+<td colspan="2">
+<button type="button" onclick="ws_GetVersion();">Click Me!</button>
+<input type="text" id="TextBox_Ver" name="TextBox_Ver" value="" >
+</td>
+</tr>
+<tr>
+<td>H_Sign</td>
+<td colspan="2">
+<button type="button" onclick="ws_H_Sign();">Click Me!</button>
+</td>
+</tr>
+<tr>
+<td>EnCrypt</td>
+<td colspan="2">
+<button type="button" onclick="ws_EnCrypt();">Click Me!</button>
+</td>
+</tr>
+<tr>
+<td>SecureGetBasic</td>
+<td colspan="2">
+<button type="button" onclick="ws_SecureGetBasicWithParam();">Click Me!</button>
+</td>
+</tr>
+<tr>
+<td>H_SignIPAndPort</td>
+<td colspan="2">
+<button type="button" onclick="ws_H_SignIPAndPort();">Click Me!</button>
+</td>
+</tr>
+<tr>
+<td>GetHostIPaddr</td>
+<td colspan="2">
+<button type="button" onclick="ws_GetHostIPaddr();">Click Me!</button>
+<input type="text" id="TextBox_IP" name="TextBox_IP" value="cloudicap.nhi.gov.tw" >
+</td>
+</tr>
+<tr>
+<td>GetHostPort</td>
+<td colspan="2">
+<button type="button" onclick="ws_GetHostPort();">Click Me!</button>
+<input type="text" id="TextBox_PORT" name="TextBox_PORT" value="443" >
+</td>
+</tr>
+<tr>
+<td>Response</td>
+<td>
+<textarea name="displayText" id="displayText" rows="6" cols="50"></textarea>
+</td>
+</tr>
+<tr>
+<td>status</td>
+<td id="status" name="status">
+</td>
+</tr>
+</table>
+<div id="log"></div>
+</form>
+<!--script type="text/javascript" src="js/stuff.js"></script-->
+<script language="javascript" type="text/javascript">
+	//connected = document.getElementById("connected");
+    <!-- log = document.getElementById("log"); -->
+    <!-- chat = document.getElementById("chat"); -->
+    <!-- form = chat.form; -->
+	var browserName;
+    var ChildWin;
+//    var wsUri = "wss://127.0.0.1:7777/echo";  	
+//    var httpsAcceptUri = "https://127.0.0.1:7777";  	
+    state = document.getElementById("status");
+// 	var wsUri = "wss://iccert.nhi.gov.tw:7777/echo"; 
+ 	var wsUri = "wss://localhost:7777/echo"; 
+	
+	// Handle difference for IE.
+	if (window.addEventListener)
+	{
+		window.addEventListener("load", browserDetect, false);
+	}
+	else if (window.attachEvent)
+	{
+		window.attachEvent("onload", browserDetect)    
+	}
+
+	function browserDetect()
+	{
+        var bwstr=getBWver().split(':');
+//        if(bwstr){
+//            BrowserDetect.browser = bwstr[0];
+//            BrowserDetect.version = bwstr[1];
+//        }
+		document.getElementById("browserType").innerHTML = bwstr[0] + ' ' + bwstr[1];
+//		browserName = BrowserDetect.browser;
+//		if(browserName == "Safari"){
+//            wsUri = "wss://127.0.0.1:7776/echo";  	
+//        }
+//		document.getElementById("platform").innerHTML = BrowserDetect.OS;
+		document.getElementById("platform").innerHTML = navigator.userAgent;
+		document.getElementById("platform").innerHTML = getOSver();
+		if (window.WebSocket)
+		{
+		  document.getElementById("wsSupportImg").src = "img/check.png"
+		}
+		else
+		{
+		  document.getElementById("wsSupportImg").src = "img/cross.png"
+		}
+        var arr = document.cookie.match(new RegExp("(^| )"+"mNHIICCService"+"=([^;]*)(;|$)"));
+        if(arr!=null) {
+          var exp = new Date();
+          exp.setTime(exp.getTime() - 1);
+          var cval=unescape(arr[2]);
+           document.cookie= name + "="+cval+";expires="+exp.toGMTString();
+        }
+    
+		onLoad();
+	}
+
+	function onLoad()
+    {
+		//if(browserName != "Chrome"){
+//			var name = 'popUp';
+//			var appearence = 'dependent=yes,menubar=no,resizable=no,' +
+//						'status=no,toolbar=no,titlebar=no,' +
+//						'left=5,top=180,width=420px,height=300px';
+			//ChildWin=window.open("https://127.0.0.1:7777",name,appearence);
+//            ChildWin=window.open(httpsAcceptUri,name,appearence);
+		//}
+        //var wsUri = "wss://127.0.0.1:7777/echo";  	
+        websocket = new WebSocket(wsUri);
+        websocket.onopen = function(evt) { onOpen(evt) };
+        websocket.onclose = function(evt) { onClose(evt) };
+        websocket.onmessage = function(evt) { onMessage(evt) };
+        websocket.onerror = function(evt) { onError(evt) };
+    }
+  
+    function onOpen(evt)
+    {
+        state.className = "success";
+        state.innerHTML = "Connected to server";
+        var exp  = new Date();    
+        exp.setTime(exp.getTime() + 60000);
+        document.cookie = "mNHIICCService="+ escape ("Conn") + ";expires=" + exp.toGMTString();
+        //document.getElementById("displayText").value =getOSver();
+ //       ChildWin.close();
+//		document.getElementById("displayText").value ="";
+//		websocket.send("GetVersion");
+//        ws_GetVersion();
+//setTimeout(() => { ws_GetVersion(); },50);
+setTimeout(function (){ ws_GetVersion(); }, 50);
+    }
+  
+    function onClose(evt)
+    {
+        state.className = "fail";
+        state.innerHTML = "Not connected";
+        //connected.innerHTML = "0"; 
+   //     ChildWin.close();
+    }
+	
+	function ws_GetBasic() {
+		document.getElementById("displayText").value ="";
+		websocket.send("GetBasic");
+	}
+	
+	function ws_GetRandom() {
+		document.getElementById("displayText").value ="";
+		websocket.send("GetRandom");
+	}
+	
+	function ws_GetVersion() {
+		document.getElementById("displayText").value ="";
+		websocket.send("GetVersion");
+	}
+	
+	function ws_H_Sign() {
+		websocket.send("H_Sign?Random="+"0001"+document.getElementById("displayText").value);
+		document.getElementById("displayText").value ="";
+	}
+    
+ 	function ws_EnCrypt() {
+		websocket.send("EnCrypt?Pwd="+"123456789012");
+		document.getElementById("displayText").value ="";
+	}
+	
+	function ws_SecureGetBasicWithParam() {
+		websocket.send("SecureGetBasicWithParam?Pwd="+"44666");
+		document.getElementById("displayText").value ="";
+	}
+	
+	function ws_H_SignIPAndPort() {
+		websocket.send("H_SignIPAndPort?Random="+document.getElementById("TextBox_Random").value+"&IP="+document.getElementById("TextBox_IP").value+"&PORT="+document.getElementById("TextBox_PORT").value);
+		document.getElementById("displayText").value ="";
+	}
+	
+	function ws_GetHostIPaddr() {
+		websocket.send("GetHostIPaddr");
+		document.getElementById("displayText").value ="";
+	}
+	
+	function ws_GetHostPort() {
+		websocket.send("GetHostPort");
+		document.getElementById("displayText").value ="";
+	}
+	
+   function onMessage(evt)
+    {
+        // There are two types of messages: 
+        //     1. a chat participant message itself
+        //     2. a message with a number of connected chat participants
+		// alert("msg!!"+evt.data);
+		//document.getElementById("displayText").value = evt.data;
+        var message = evt.data;
+        if (message.substring(0, 11)=="GetVersion:")
+        {
+            var splA = message.split(":"); 
+            if (splA[1]<"0005"){
+			
+                document.getElementById("displayText").value = "讀卡服務程式版本過舊(目前版本為"+splA[1]+")，建議移除現有版本，並重新下載安裝使用0005版以後的健保卡驗證元件！";	
+            }
+            else{
+                document.getElementById("displayText").value = message;	
+            }
+			document.getElementById("TextBox_Ver").value = splA[1];	
+        }	
+        else if (message.substring(0, 10)=="GetRandom:")
+        {
+            var splA = message.split(":"); 
+			document.getElementById("TextBox_Random").value = splA[1];	
+            document.getElementById("displayText").value = message;	
+        }	
+        else if (message.substring(0, 16)=="H_SignIPAndPort:")
+        {
+            var splA = message.split(":"); 
+			//document.getElementById("TextBox_Random").value = splA[1];	
+            document.getElementById("displayText").value = message;	
+        }	
+        else if (message.substring(0, 14)=="GetHostIPaddr:")
+        {
+            var splA = message.split(":"); 
+			document.getElementById("TextBox_IP").value = splA[1];	
+            document.getElementById("displayText").value = message;	
+        }	
+        else if (message.substring(0, 12)=="GetHostPort:")
+        {
+            var splA = message.split(":"); 
+			document.getElementById("TextBox_PORT").value = splA[1];	
+            document.getElementById("displayText").value = message;	
+        }	
+        else{
+            document.getElementById("displayText").value = message;	
+        }
+		/*
+        if (message.startsWith("log:"))
+        {
+            message = message.slice("log:".length);
+            log.innerHTML = '<li class="message">' + message + "</li>" + log.innerHTML;	
+        }
+        else if (message.startsWith("connected:"))
+        {
+            message = message.slice("connected:".length);
+            connected.innerHTML = message;	
+        } 
+		*/		
+    }
+
+    function onError(evt)
+    { 
+        state.className = "fail";
+        state.innerHTML = "Communication error";
+		document.getElementById("displayText").value = evt.data;
+		//if(browserName != "Chrome"){
+//			var name = 'popUp';
+//			var appearence = 'dependent=yes,menubar=no,resizable=no,' +
+//						'status=no,toolbar=no,titlebar=no,' +
+//						'left=5,top=280,width=420px,height=300px';
+			//window.open("https://127.0.0.1:7777",name,appearence);
+//            ChildWin=
+//            window.open(httpsAcceptUri,name,appearence);
+			//var wsUri = "wss://127.0.0.1:7777/echo";  	
+			websocket = new WebSocket(wsUri);
+			websocket.onopen = function(evt) { onOpen(evt) };
+			websocket.onclose = function(evt) { onClose(evt) };
+			websocket.onmessage = function(evt) { onMessage(evt) };
+			websocket.onerror = function(evt) { onError(evt) };
+		//}
+    }
+	
+    function addMessage()
+    {
+        var message = chat.value;
+      
+        chat.value = "";
+	  
+        websocket.send(message);
+    }	
+	
+    function getBWver() {
+            var Sys = {};
+            var ua = navigator.userAgent.toLowerCase();
+            var s;
+//            alert(ua);
+            (s = ua.match(/rv:([\d.]+)\) like gecko/)) ? Sys.ie = s[1] :
+            (s = ua.match(/edge\/([\d.]+)/)) ? Sys.ie = s[1] :
+            (s = ua.match(/msie ([\d.]+)/)) ? Sys.ie = s[1] :
+            (s = ua.match(/firefox\/([\d.]+)/)) ? Sys.firefox = s[1] :
+            (s = ua.match(/opr\/([\d.]+)/)) ? Sys.opera = s[1] :
+            (s = ua.match(/chrome\/([\d.]+)/)) ? Sys.chrome = s[1] :
+ //           (s = ua.match(/opera.([\d.]+)/)) ? Sys.opera = s[1] :
+            (s = ua.match(/version\/([\d.]+).*safari/)) ? Sys.safari = s[1] : 0;
+            
+            if (Sys.ie)      return 'MSIE:'    +  Sys.ie;     //document.write('IE: ' + Sys.ie);
+            if (Sys.firefox) return 'Firefox:' +  Sys.firefox;//document.write('Firefox: ' + Sys.firefox);
+            if (Sys.chrome)  return 'Chrome:'  +  Sys.chrome; //document.write('Chrome: ' + Sys.chrome);
+            if (Sys.opera)   return 'Opera:'   +  Sys.opera;  //document.write('Opera: ' + Sys.opera);
+            if (Sys.safari)  return 'Safari:'  +  Sys.safari; //document.write('Safari: ' + Sys.safari);
+    }
+    function getOSver() {
+            var Sys = {};
+            var ua = navigator.userAgent.toLowerCase();
+            var s;
+            (s = ua.match(/windows nt ([\d.]+);/)) ? Sys.win = s[1] :
+            (s = ua.match(/mac\)/)) ? Sys.mac = s[1] :
+            (s = ua.match(/linux\)/)) ? Sys.linux = s[1] : 0;
+            if (Sys.win) {
+			    var bit=" 32 bits";
+				var found;
+                (found = ua.match(/wow64/)) ? bit = " 64 bits" :
+                (found = ua.match(/win64/)) ? bit = " 64 bits" :
+                (found = ua.match(/x64/)) ? bit = " 64 bits" : 0;
+                //var parser=Sys.win.split(';');
+			    //parser[0]
+                switch(Sys.win){
+                    case "3.1":
+                    case "3.5":
+                    case "3.51":
+                    case "4.0":			return 'Windows NT'+bit;
+                    case "5.0":			return 'Windows 2000'+bit;
+                    case "5.1":
+                    case "5.2":			return 'Windows XP'+bit;
+                    case "6.0":         return 'Windows Vista'+bit;
+                    case "6.1":         return 'Windows 7'+bit;
+                    case "6.2":         return 'Windows 8'+bit;
+                    case "6.3":         return 'Windows 8.1'+bit;
+                    case "10.0":        return 'Windows 10'+bit;
+                    default: return 'Windows';
+                }
+			}
+            if (Sys.linux) {
+			    var bit=" 32 bits";
+				var found;
+				var other="";
+                (found = ua.match(/x86_64/)) ? bit = " 64 bits" :
+                (found = ua.match(/x64/)) ? bit = " 64 bits" : 0;
+				
+                (found = ua.match(/ubuntu/)) ? other = " Ubuntu" : 0;
+				
+				return "Linux"+bit+other;
+            }
+				
+			//    return 'Windows:'    +  Sys.win+","+s[1];     //document.write('IE: ' + Sys.ie);
+			
+	        return "";//"s:"+s[0]+","+s[1];
+    }
+		
+</script>
+</BODY>
+</HTML>

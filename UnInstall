@@ -1,0 +1,85 @@
+#!/bin/bash
+sudo killall mLNHIICC;
+#sudo killall nhiicc;
+
+#sudo /usr/local/share/NHIICC/nhiicc --stop
+#sudo /usr/local/share/NHIICC/nhiicc --uninstall 
+
+grep -q iccert.nhi.gov.tw /etc/hosts;
+if [ $? -eq 0 ] ; then
+    sudo sed -i '/iccert\.nhi\.gov\.tw/d' /etc/hosts;
+fi
+
+if [ -f /etc/debian_version ]; then
+    sudo rm /etc/init.d/NHIICC.sh /etc/rc5.d/S50NHIICC.sh;
+elif [ -f /etc/rc.local ]; then
+    sudo sed -i '/mLNHIICC/d' /etc/rc.local;
+elif [ -f /etc/init.d/NHIICC.sh ]; then
+    sudo rm /etc/init.d/NHIICC.sh /etc/rc5.d/S50NHIICC.sh;
+else
+     echo ""
+fi
+
+if [ -d /usr/local/share/NHIICC ]; then
+    sudo rm -R /usr/local/share/NHIICC;
+fi
+
+#echo "64 or 32";
+certfile="./cert/NHIRootCA.crt";
+certname="NHI.Root.CA";
+certfile2="./cert/NHIServerCert.crt";
+certname2="NHI.Self.Server.Cert";
+#echo "certfile: ${certfile} , certname: ${certname} ,certfile2: ${certfile2} ,certname2: ${certname2} ,";
+#for certDB in $(find ~/ -name "cert8.db")
+#do
+#    certdir=$(dirname ${certDB});
+#    sudo certutil -D -n "${certname}" -d dbm:${certdir}
+#    sudo certutil -D -n "${certname2}" -d dbm:${certdir}
+#done
+
+#for certDB in $(find ~/ -name "cert9.db")
+#do
+#    certdir=$(dirname ${certDB});
+#    sudo certutil -D -n "${certname}" -d sql:${certdir}
+#    sudo certutil -D -n "${certname2}" -d sql:${certdir}
+#done
+
+#archs=`uname -m`
+
+#if [ $archs="x86_64" ]; then
+#  echo "ARCH: 64-bit"
+#else
+#  echo "ARCH: 32-bit"
+#fi
+
+set echo off;
+if [ $(uname -m) = "x86_64" ]; then
+    for certDB in $(find ~/.mozilla -name *default-release*);
+    do
+#    certdir=$(dirname ${certDB});
+        certdir=${certDB};
+#    sudo certutil -D -n "${certname}" -d ${certdir}
+#    sudo certutil -D -n "${certname2}" -d ${certdir}
+        sudo certutil -D -n "${certname}" -d sql:${certdir};
+#    sudo certutil -D -n "${certname2}" -d sql:${certdir}
+    done
+else
+    for certDB in $(find ~/.mozilla -name *default);
+    do
+        certdir=${certDB};
+        sudo certutil -D -n "${certname}" -d dbm:${certdir};
+#        sudo certutil -D -n "${certname}" -d sql:${certdir}
+    done
+fi
+
+for certDB in $(find ~/.pki -name nssdb);
+do
+#    certdir=$(dirname ${certDB});
+    certdir=${certDB};
+    sudo certutil -D -n "${certname}" -d sql:${certdir};
+#    sudo certutil -D -n "${certname2}" -d sql:${certdir}
+done
+set echo on;
+sudo trust anchor --remove cert/ca.crt || true;
+
+exit;

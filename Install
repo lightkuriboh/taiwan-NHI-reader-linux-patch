@@ -1,0 +1,254 @@
+#!/bin/bash
+
+sudo killall mLNHIICC;
+#sudo killall nhiicc;
+ 
+if [ ! -e "/usr/local/share/NHIICC/mLNHIICC" ] ; then
+    sudo mkdir -p /usr/local/share/NHIICC ;
+    sudo chmod 755 /usr/local/share/NHIICC ;
+    case $(uname -m) in
+    x86_64)
+        sudo cp ./x64/mLNHIICC /usr/local/share/NHIICC/mLNHIICC ;
+#        sudo cp ./x64/nhiicc /usr/local/share/NHIICC/nhiicc ;
+        if [ -f /etc/redhat-release ]; then
+            sudo cp ./x64/RH/mLNHIICC /usr/local/share/NHIICC/mLNHIICC ;
+        fi 
+        echo "x86_64"
+        ;;
+    i*86)
+        sudo cp ./x32/mLNHIICC /usr/local/share/NHIICC/mLNHIICC ;
+        echo "32 bit version"
+        ;;
+    *)
+        echo "unknow OS bits , Sorry! No support! ";
+        exit 0
+        ;;
+    esac
+
+  #cp ./ReStart_NHIICC.sh /usr/local/share/NHIICC/ReStart_NHIICC.sh ;
+    sudo chmod 755 /usr/local/share/NHIICC/mLNHIICC ;
+#    sudo chmod 755 /usr/local/share/NHIICC/nhiicc ;
+#    sudo cp -R ./html /usr/local/share/NHIICC ;
+#    sudo cp -R ./cert /usr/local/share/NHIICC ;
+    sudo cp -R ./web /usr/local/share/NHIICC ;
+	
+	
+	
+	
+     grep localhost /etc/hosts | grep -q 127.0.0.1;
+    if [ ! $? -eq 0 ]
+    then
+        sudo -- sh -c "echo  \ \ >> /etc/hosts";sudo -- sh -c "echo 127.0.0.1 localhost >> /etc/hosts"
+    fi
+#    grep  iccert.nhi.gov.tw /etc/hosts | grep -q 127.0.0.1;
+#    if [ ! $? -eq 0 ]
+#    then
+#        sudo -- sh -c "echo  \ \ >> /etc/hosts";sudo -- sh -c "echo 127.0.0.1 iccert.nhi.gov.tw >> /etc/hosts"
+#    fi
+
+
+fi
+
+if [ -f /etc/debian_version ]; then
+    #DISTRO=Debian
+    # XXX or Ubuntu
+
+	sudo apt-get install -y libc6 
+#    sudo apt-get install libc6=2.31-0ubuntu9
+	sudo apt-get install -y openssl
+	sudo apt-get install -y pcscd
+	sudo apt-get install -y libnss3-tools
+    if [ $(uname -m) = "x86_64" ]; then
+	sudo apt-get install -y libssl1.1 
+    else
+	sudo apt-get install -y libssl1.0 
+    fi
+	sudo apt-get install -y libssl-dev 
+	sudo apt-get install -y ca-certificates
+	sudo apt-get install -y libboost-all-dev
+	sudo apt-get install -y unbound-anchor
+    sudo apt upgrade
+
+#    sudo /usr/local/share/NHIICC/nhiicc --install 
+	
+    if [ -f /etc/init.d/NHIICC.sh ]; then
+
+        #sudo chmod +x /etc/init.d/NHIICC.sh
+        #sudo ln -s /etc/init.d/NHIICC.sh /etc/rc5.d/S50NHIICC.sh
+		sudo rm /etc/rc5.d/S50NHIICC.sh
+		sudo rm /etc/init.d/NHIICC.sh
+
+#    else
+    fi
+        sudo  sh -c "echo '#!/bin/bash' >> /etc/init.d/NHIICC.sh"
+        sudo  sh -c "echo '#' >> /etc/init.d/NHIICC.sh"
+        sudo  sh -c "echo '#' >> /etc/init.d/NHIICC.sh"
+        sudo  sh -c "echo '/usr/local/share/NHIICC/mLNHIICC &' >> /etc/init.d/NHIICC.sh"
+        sudo  sh -c "echo '/usr/local/share/NHIICC/nhiicc --CertFile /usr/local/share/NHIICC/cert/NHIServerCert.crt --PrivateFileKey /usr/local/share/NHIICC/cert/NHIServerCert.key &' >> /etc/init.d/NHIICC.sh"
+        sudo  sh -c "echo '#' >> /etc/init.d/NHIICC.sh"
+
+        sudo chmod +x /etc/init.d/NHIICC.sh
+        sudo ln -s /etc/init.d/NHIICC.sh /etc/rc5.d/S50NHIICC.sh
+
+
+
+
+else
+    #DISTRO=$(uname -s)
+
+     which yum && { 
+#	     echo centos redhat fedora;  
+        sudo yum -y install glibc 
+        sudo yum -y install pcsc-lite
+        sudo yum -y install openssl 
+#        sudo yum -y install compat-openssl10
+        sudo yum -y install ca-certificates
+        sudo yum -y install boost-devel
+        sudo yum -y install unbound-libs
+        sudo yum -y install nss-tools
+     }
+#     which zypper && { echo opensuse;  }
+#     which apt-get && { echo debian;  }
+#cat /etc/*version
+#cat /proc/version #linprocfs/version for FreeBSD when "linux" enabled
+#cat /etc/*release
+#uname -rv
+#        sudo update-ca-trust force-enable
+#        sudo cp ./cert/NHIServerCert.crt /etc/pki/ca-trust/source/anchors/
+#        sudo update-ca-trust extract
+    if [ -f /etc/rc.local ]; then	
+        if cat /etc/rc.local | grep -q "mLNHIICC";
+            then echo "found rc"
+        else 
+            sed -i -e '$i /usr/local/share/NHIICC/mLNHIICC &\n' /etc/rc.local
+        fi
+    else
+        sudo cp NHIICC.sh /etc/init.d/NHIICC.sh;
+        sudo chmod +x /etc/init.d/NHIICC.sh;
+        sudo ln -s /etc/init.d/NHIICC.sh /etc/rc5.d/S50NHIICC.sh;
+    fi 
+
+fi
+
+#    pushd /usr/local/share/NHIICC/cert	
+#    sudo openssl genrsa -out NHIRootCA.key 3072
+#    sudo openssl req -new -key NHIRootCA.key -out NHIRootCA.req -config CAreq.cnf 
+#    sudo openssl x509 -req -days 10958 -sha256 -extensions v3_ca -signkey NHIRootCA.key -in NHIRootCA.req -out NHIRootCA.crt
+
+#    sudo echo 10000 > NHIRootCA.srl
+
+#    sudo openssl genrsa -out NHIServerCert.key 3072
+#    sudo openssl req -new -key NHIServerCert.key -out NHIServerCert.req -config Serverreq.cnf 
+#    sudo openssl x509 -in NHIServerCert.req -out NHIServerCert.crt -req -signkey NHIServerCert.key -days 18263 -sha256 -extfile v3.ext
+#    sudo openssl rsa -in NHIServerCert.key -out NHIServerCertKey.pem
+#    sudo openssl x509 -inform PEM -in NHIServerCert.crt -out NHIServerCert.pem 
+#    sudo openssl x509 -inform PEM -in NHIRootCA.crt -out NHIRootCA.pem
+#    sudo cp ./NHIServerCert.crt /usr/local/share/NHIICC/NHIServerCert.crt
+#    sudo cp ./NHIServerCert.key /usr/local/share/NHIICC/NHIServerCert.key#sudo cp ./cert/#NHIRootCA.pem /usr/local/share/ca-certificates/
+#sudo update-ca-certificates
+
+    pushd cert
+
+if [ $(uname -m) = "x86_64" ]; then
+
+    openssl rand -base64 32 > ~/.rnd
+#set -eu
+    org=nhi-localhost-ca
+    domain=localhost
+
+    sudo trust anchor --remove ca.crt || true
+
+    openssl genpkey -algorithm RSA -out ca.key
+    openssl req -x509 -key ca.key -out ca.crt \
+        -subj "/CN=$org/O=$org"
+
+    openssl genpkey -algorithm RSA -out "$domain".key
+    openssl req -new -key "$domain".key -out "$domain".csr \
+        -subj "/CN=$domain/O=$org"
+
+    openssl x509 -req -in "$domain".csr -days 18263 -out "$domain".crt \
+        -CA ca.crt -CAkey ca.key -CAcreateserial \
+    -extfile <(cat <<END
+basicConstraints = CA:FALSE
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid,issuer
+subjectAltName = DNS:$domain
+END
+    )
+
+    sudo trust anchor ca.crt
+fi
+    sudo chmod 755 *
+    sudo cp ./localhost.crt ./NHIServerCert.crt
+    sudo cp ./localhost.key ./NHIServerCert.key
+    sudo cp ./ca.crt ./NHIRootCA.crt
+
+
+
+#sudo trust anchor NHIRootCA.crt
+    popd 	
+    sudo cp -R ./cert /usr/local/share/NHIICC ;
+#    sudo cp ./cert/localhost.crt /usr/local/share/NHIICC/NHIServerCert.crt
+#    sudo cp ./cert/localhost.key /usr/local/share/NHIICC/NHIServerCert.key
+
+    pushd /usr/local/share/NHIICC 
+certfile="./cert/NHIRootCA.crt"
+certname="NHI.Root.CA"
+#certfile2="./cert/NHIServerCert.crt"
+#certname2="NHI.Self.Server.Cert"
+#pemfile="./cert/NHIRootCA.pem"
+#pemfile2="./cert/NHIServerCert.pem"
+
+#for certDB in $(find ~/ -name "cert8.db")
+#do
+#    certdir=$(dirname ${certDB});
+#    sudo certutil -A -n "${certname}" -t "TCu,Cu,Tu" -i ${certfile} -d dbm:${certdir}
+##    sudo certutil -A -n "${certname2}" -t "P,," -i ${certfile2} -d dbm:${certdir}
+#done
+
+#for certDB in $(find ~/ -name "cert9.db")
+#do
+#    certdir=$(dirname ${certDB});
+#    sudo certutil -A -n "${certname}" -t "TCu,Cu,Tu" -i ${certfile} -d sql:${certdir}
+##    sudo certutil -A -n "${certname2}" -t "P,," -i ${certfile2} -d sql:${certdir}
+#done
+
+if [ $(uname -m) = "x86_64" ]; then
+    for certDB in $(find ~/.mozilla -name *default-release*)
+    do
+#    certdir=$(dirname ${certDB});
+        certdir=${certDB};
+        sudo certutil -A -n "${certname}" -t "TC,,"  -i ${certfile} -d sql:${certdir} 
+#    sudo certutil -A -n "${certname2}" -t "TC,,"  -i ${certfile2} -d sql:${certdir} 
+#    sudo certutil -A -n "${certname}" -t "cTC,cTC,cTC"  -i ${pemfile} -d ${certdir} 
+#    sudo certutil -A -n "${certname2}" -t "cTC,cTC,cTC"  -i ${pemfile2} -d ${certdir} 
+#    sudo certutil -A -n "${certname}" -t "cTC,cTC,cTC"  -i ${pemfile} -d sql:${certdir} 
+#    sudo certutil -A -n "${certname2}" -t "cTC,cTC,cTC"  -i ${pemfile2} -d sql:${certdir} 
+    done
+else
+    for certDB in $(find ~/.mozilla -name *default)
+    do
+        certdir=${certDB};
+        sudo certutil -A -n "${certname}" -t "PCT,Cu,Tu" -i ${certfile} -d dbm:${certdir}
+#        sudo certutil -A -n "${certname}" -t "PCT,,"  -i ${certfile} -d sql:${certdir} 
+    done
+fi
+
+for certDB in $(find ~/.pki -name nssdb)
+do
+#    certdir=$(dirname ${certDB});
+    certdir=${certDB};
+    sudo certutil -A -n "${certname}" -t "PCT,," -i ${certfile} -d sql:${certdir} 
+#    sudo certutil -A -n "${certname2}" -t "PCT,," -i ${certfile2} -d sql:${certdir} 
+done
+#sudo trust anchor ./cert/NHIRootCA.crt
+
+    popd 	
+
+sleep 10;
+    sudo /usr/local/share/NHIICC/mLNHIICC & 
+	
+#if $(uname -m | grep '64'); then
+#    sudo /usr/local/share/NHIICC/nhiicc --CertFile /usr/local/share/NHIICC/cert/NHIServerCert.crt --PrivateFileKey /usr/local/share/NHIICC/cert/NHIServerCert.key & 
+#fi
+exit;

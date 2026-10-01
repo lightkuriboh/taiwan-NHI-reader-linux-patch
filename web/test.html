@@ -1,0 +1,505 @@
+﻿<!DOCTYPE html>
+<html>
+<HEAD>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <TITLE>TEST NHIICC</TITLE>
+</HEAD>
+<BODY>
+    <form action="" method="post" id="myform" name="myform">
+        <h1>Status</h1>
+        <table border="1">
+            <thead>
+                <tr>
+                    <td></td>
+                    <td colspan="2">MIX</td>
+                    <td colspan="2">HTTP</td>
+                    <td colspan="2">HTTPS</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>API Status</td>
+                    <td><button type="button" id="btnGetStatus">Refresh</button></td>
+                    <td><span id="lbStatus"></span></td>
+                    <td><button type="button" id="btnHttpGetStatus">Refresh</button></td>
+                    <td><span id="lbHttpStatus"></span></td>
+                    <td><button type="button" id="btnHttpsGetStatus">Refresh</button></td>
+                    <td><span id="lbHttpsStatus"></span></td>
+                </tr>
+                <tr>
+                    <td>Card Status</td>
+                    <td><button type="button" id="btnGetCardStatus">Refresh</button></td>
+                    <td><span id="lbCardStatus"></span></td>
+                    <td><button type="button" id="btnHttpGetCardStatus">Refresh</button></td>
+                    <td><span id="lbHttpCardStatus"></span></td>
+                    <td><button type="button" id="btnHttpsGetCardStatus">Refresh</button></td>
+                    <td><span id="lbHttpsCardStatus"></span></td>
+                </tr>
+            </tbody>
+            
+        </table>
+        <h1>Request</h1>
+        <table border="1">
+            <thead>
+                <tr>
+                    <td></td>
+                    <td colspan="2">MIX</td>
+                    <td colspan="2">HTTP</td>
+                    <td colspan="2">HTTPS</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>GetVersion</td>
+                    <td colspan="2">
+                        <button type="button" id="btnGetVersion">Click Me!</button>
+                    </td>
+                    <td colspan="2">
+                        <button type="button" id="btnHttpGetVersion">Click Me!</button>
+                    </td>
+                    <td colspan="2">
+                        <button type="button" id="btnHttpsGetVersion">Click Me!</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>GetBasic</td>
+                    <td colspan="2">
+                        <button type="button" id="btnGetBasic">Click Me!</button>
+                    </td>
+                    <td colspan="2">
+                        <button type="button" id="btnHttpGetBasic">Click Me!</button>
+                    </td>
+                    <td colspan="2">
+                        <button type="button" id="btnHttpsGetBasic">Click Me!</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>GetRandom</td>
+                    <td colspan="2">
+                        <button type="button" id="btnGetRandom">Click Me!</button>
+                    </td>
+                    <td colspan="2">
+                        <button type="button" id="btnHttpGetRandom">Click Me!</button>
+                    </td>
+                    <td colspan="2">
+                        <button type="button" id="btnHttpsGetRandom">Click Me!</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>H_Sign</td>
+                    <td>
+                        <button type="button" id="btnH_Sign">Click Me!</button>
+                    </td>
+                    <td>
+                        <label>Random</label>
+                        <input id="txtRandom" type="text" />
+                    </td>
+                    <td>
+                        <button type="button" id="btnHttpH_Sign">Click Me!</button>
+                    </td>
+                    <td>
+                        <label>Random</label>
+                        <input id="txtHttpRandom" type="text" />
+                    </td>
+                    <td>
+                        <button type="button" id="btnHttpsH_Sign">Click Me!</button>
+                    </td>
+                    <td>
+                        <label>Random</label>
+                        <input id="txtHttpsRandom" type="text" />
+                    </td>
+
+                </tr>
+                <tr>
+                    <td>EnCrypt</td>
+                    <td>
+                        <button type="button" id="btnEncryptPwd">Click Me!</button>
+                    </td>
+                    <td>
+                        <label>Password</label>
+                        <input id="txtPassword" type="text" maxlength="12" value="123456" />
+                    </td>
+                    <td>
+                        <button type="button" id="btnHttpEncryptPwd">Click Me!</button>
+                    </td>
+                    <td>
+                        <label>Password</label>
+                        <input id="txtHttpPassword" type="text" maxlength="12" value="123456" />
+                    </td>
+                    <td>
+                        <button type="button" id="btnHttpsEncryptPwd">Click Me!</button>
+                    </td>
+                    <td>
+                        <label>Password</label>
+                        <input id="txtHttpsPassword" type="text" maxlength="12" value="123456" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>SecureGetBasic</td>
+                    <td>
+                        <button type="button" id="btnGetEncryptBasic">Click Me!</button>
+                    </td>
+                    <td>
+                        <label>Password</label>
+                        <input id="txtEnc" type="text" maxlength="12" value="123456" />
+                    </td>
+                    <td>
+                        <button type="button" id="btnHttpGetEncryptBasic">Click Me!</button>
+                    </td>
+                    <td>
+                        <label>Password</label>
+                        <input id="txtHttpEnc" type="text" maxlength="12" value="123456" />
+                    </td>
+                    <td>
+                        <button type="button" id="btnHttpsGetEncryptBasic">Click Me!</button>
+                    </td>
+                    <td>
+                        <label>Password</label>
+                        <input id="txtHttpsEnc" type="text" maxlength="12" value="123456" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>Test All</td>
+                    <td>
+                        <button type="button" id="btnTestAll">Click Me!</button>
+                    </td>
+                    <td>
+                        <label>Password</label>
+                        <input id="txtTestAllPwd" type="text" maxlength="12" value="123456" />
+                    </td>
+                    <td>
+                        <button type="button" id="btnHttpTestAll">Click Me!</button>
+                    </td>
+                    <td>
+                        <label>Password</label>
+                        <input id="txtHttpTestAllPwd" type="text" maxlength="12" value="123456" />
+                    </td>
+                    <td>
+                        <button type="button" id="btnHttpsTestAll">Click Me!</button>
+                    </td>
+                    <td>
+                        <label>Password</label>
+                        <input id="txtHttpsTestAllPwd" type="text" maxlength="12" value="123456" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>Test Popup</td>
+                    <td>
+                        <button type="button" id="btnTestPopup">Click Me!</button>
+                    </td>
+                    <td>
+                        <label>Password</label>
+                        <input id="txtTestPopupPwd" type="text" maxlength="12" value="123456" />
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <h1>Response</h1>
+        <p id="divResponse"></p>
+		<h1>H_Sign</h1>
+		<button type="button" id="btnTestH_Sign">Click Me!</button>
+    </form>
+    <script src="Scripts/jquery-1.12.4.min.js"></script>
+    <script src="Scripts/nhiicc.host.js"></script>
+    <script type="text/javascript">
+        var nhiicc = new nhiicc_host();
+        function refreshStatus() {
+            $('#lbStatus').text('Wait');
+            nhiicc.GetStatus(function (response) {
+                if (response.result === "0000") {
+                    $('#lbStatus').text('OK');
+                } else {
+                    $('#lbStatus').text('Fail');
+                }
+            }, function () {
+                $('#lbStatus').text('Err');
+            });
+        }
+        function refreshCardStatus() {
+            $('#lbCardStatus').text('Wait');
+            nhiicc.GetCardStatus(function (response) {
+                if (response.result === "0000") {
+                    $('#lbCardStatus').text('OK');
+                } else {
+                    $('#lbCardStatus').text('Fail');
+                }
+            }, function () {
+                $('#lbCardStatus').text('Err');
+            });
+        }
+        function refreshHttpStatus() {
+            $('#lbHttpStatus').text('Wait');
+            nhiicc.HttpGetStatus(function (response) {
+                if (response.result === "0000") {
+                    $('#lbHttpStatus').text('OK');
+                } else {
+                    $('#lbHttpStatus').text('Fail');
+                }
+            }, function () {
+                $('#lbHttpStatus').text('Err');
+            });
+        }
+        function refreshHttpCardStatus() {
+            $('#lbHttpCardStatus').text('Wait');
+            nhiicc.HttpGetCardStatus(function (response) {
+                if (response.result === "0000") {
+                    $('#lbHttpCardStatus').text('OK');
+                } else {
+                    $('#lbHttpCardStatus').text('Fail');
+                }
+            }, function () {
+                $('#lbHttpCardStatus').text('Err');
+            });
+        }
+        function refreshHttpsStatus() {
+            $('#lbHttpsStatus').text('Wait');
+            nhiicc.HttpsGetStatus(function (response) {
+                if (response.result === "0000") {
+                    $('#lbHttpsStatus').text('OK');
+                } else {
+                    $('#lbHttpsStatus').text('Fail');
+                }
+            }, function () {
+                $('#lbHttpsStatus').text('Err');
+            });
+        }
+        function refreshHttpsCardStatus() {
+            $('#lbHttpsCardStatus').text('Wait');
+            nhiicc.HttpsGetCardStatus(function (response) {
+                if (response.result === "0000") {
+                    $('#lbHttpsCardStatus').text('OK');
+                } else {
+                    $('#lbHttpsCardStatus').text('Fail');
+                }
+            }, function () {
+                $('#lbHttpsCardStatus').text('Err');
+            });
+        }
+        $(document).ready(function () {
+            refreshStatus();
+            refreshCardStatus();
+            //refreshHttpStatus();
+            //refreshHttpCardStatus();
+            //refreshHttpsStatus();
+            //refreshHttpsCardStatus();
+        });
+        $('#btnGetStatus').click(refreshStatus);
+        $('#btnGetCardStatus').click(refreshCardStatus);
+        $('#btnHttpGetStatus').click(refreshHttpStatus);
+        $('#btnHttpGetCardStatus').click(refreshHttpCardStatus);
+        $('#btnHttpsGetStatus').click(refreshHttpsStatus);
+        $('#btnHttpsGetCardStatus').click(refreshHttpsCardStatus);
+        
+        $('#btnGetVersion').click(function () {
+            nhiicc.GetVersion(function (data) {
+                console.log(data);
+                $('#divResponse').html(JSON.stringify(data));
+            }, function () {
+                $('#divResponse').html("error");
+            });
+        });
+        $('#btnHttpGetVersion').click(function () {
+            nhiicc.HttpGetVersion(function (data) {
+                console.log(data);
+                $('#divResponse').html(JSON.stringify(data));
+            }, function () {
+                $('#divResponse').html("error");
+            });
+        });
+        $('#btnHttpsGetVersion').click(function () {
+            nhiicc.HttpsGetVersion(function (data) {
+                console.log(data);
+                $('#divResponse').html(JSON.stringify(data));
+            }, function () {
+                $('#divResponse').html("error");
+            });
+        });
+        $('#btnGetBasic').click(function () {
+            nhiicc.GetBasic(function (data) {
+                console.log(data);
+                $('#divResponse').html(JSON.stringify(data));
+            }, function () {
+                $('#divResponse').html("error");
+            });
+        });
+        $('#btnHttpGetBasic').click(function () {
+            nhiicc.HttpGetBasic(function (data) {
+                console.log(data);
+                $('#divResponse').html(JSON.stringify(data));
+            }, function () {
+                $('#divResponse').html("error");
+            });
+        });
+        $('#btnHttpsGetBasic').click(function () {
+            nhiicc.HttpsGetBasic(function (data) {
+                console.log(data);
+                $('#divResponse').html(JSON.stringify(data));
+            }, function () {
+                $('#divResponse').html("error");
+            });
+        });
+        $('#btnGetRandom').click(function () {
+            nhiicc.GetRandom(function (data) {
+                console.log(data);
+                $('#divResponse').html(JSON.stringify(data));
+                $('#txtRandom').val(data.random);
+            }, function () {
+                $('#divResponse').html("error");
+            });
+        });
+        $('#btnHttpGetRandom').click(function () {
+            nhiicc.HttpGetRandom(function (data) {
+                console.log(data);
+                $('#divResponse').html(JSON.stringify(data));
+                $('#txtHttpRandom').val(data.random);
+            }, function () {
+                $('#divResponse').html("error");
+            });
+        });
+        $('#btnHttpsGetRandom').click(function () {
+            nhiicc.HttpsGetRandom(function (data) {
+                console.log(data);
+                $('#divResponse').html(JSON.stringify(data));
+                $('#txtHttpsRandom').val(data.random);
+            }, function () {
+                $('#divResponse').html("error");
+            });
+        });
+        $('#btnH_Sign').click(function () {
+            var random = $('#txtRandom').val();
+            nhiicc.SignHC(random, function (data) {
+                console.log(data);
+                $('#divResponse').html(JSON.stringify(data));
+            }, function () {
+                $('#divResponse').html("error");
+            });
+        });
+        $('#btnHttpH_Sign').click(function () {
+            var random = $('#txtHttpRandom').val();
+            nhiicc.HttpSignHC(random, function (data) {
+                console.log(data);
+                $('#divResponse').html(JSON.stringify(data));
+            }, function () {
+                $('#divResponse').html("error");
+            });
+        });
+        $('#btnHttpsH_Sign').click(function () {
+            var random = $('#txtHttpsRandom').val();
+            nhiicc.HttpsSignHC(random, function (data) {
+                console.log(data);
+                $('#divResponse').html(JSON.stringify(data));
+            }, function () {
+                $('#divResponse').html("error");
+            });
+        });
+        $('#btnEncryptPwd').click(function () {
+            var pwd = $('#txtPassword').val();
+            nhiicc.EncryptPwd(pwd, function (data) {
+                console.log(data);
+                $('#divResponse').html(JSON.stringify(data));
+            }, function () {
+                $('#divResponse').html("error");
+            });
+        });
+        $('#btnHttpEncryptPwd').click(function () {
+            var pwd = $('#txtHttpPassword').val();
+            nhiicc.HttpEncryptPwd(pwd, function (data) {
+                console.log(data);
+                $('#divResponse').html(JSON.stringify(data));
+            }, function () {
+                $('#divResponse').html("error");
+            });
+        });
+        $('#btnHttpsEncryptPwd').click(function () {
+            var pwd = $('#txtHttpsPassword').val();
+            nhiicc.HttpsEncryptPwd(pwd, function (data) {
+                console.log(data);
+                $('#divResponse').html(JSON.stringify(data));
+            }, function () {
+                $('#divResponse').html("error");
+            });
+        });
+        $('#btnGetEncryptBasic').click(function () {
+            var pwd = $('#txtEnc').val();
+            nhiicc.GetEncryptBasic(pwd, function (data) {
+                console.log(data);
+                $('#divResponse').html(JSON.stringify(data));
+            }, function (err) {
+                console.log(err);
+                $('#divResponse').html(JSON.stringify(err));
+            });
+        });
+        $('#btnHttpGetEncryptBasic').click(function () {
+            var pwd = $('#txtHttpEnc').val();
+            nhiicc.HttpGetEncryptBasic(pwd, function (data) {
+                console.log(data);
+                $('#divResponse').html(JSON.stringify(data));
+            }, function (err) {
+                console.log(err);
+                $('#divResponse').html(JSON.stringify(err));
+            });
+        });
+        $('#btnHttpsGetEncryptBasic').click(function () {
+            var pwd = $('#txtHttpsEnc').val();
+            nhiicc.HttpsGetEncryptBasic(pwd, function (data) {
+                console.log(data);
+                $('#divResponse').html(JSON.stringify(data));
+            }, function (err) {
+                console.log(err);
+                $('#divResponse').html(JSON.stringify(err));
+            });
+        });
+        $('#btnTestAll').click(function () {
+            var pwd = $('#txtTestAllPwd').val();
+            nhiicc.AuthHC(pwd, function (data) {
+                console.log(data);
+                $('#divResponse').html(JSON.stringify(data));
+            }, function () {
+                $('#divResponse').html("error");
+            });
+        });
+        $('#btnHttpTestAll').click(function () {
+            var pwd = $('#txtHttpTestAllPwd').val();
+            nhiicc.HttpAuthHC(pwd, function (data) {
+                console.log(data);
+                $('#divResponse').html(JSON.stringify(data));
+            }, function () {
+                $('#divResponse').html("error");
+            });
+        });
+        $('#btnHttpsTestAll').click(function () {
+            var pwd = $('#txtHttpsTestAllPwd').val();
+            nhiicc.HttpsAuthHC(pwd, function (data) {
+                console.log(data);
+                $('#divResponse').html(JSON.stringify(data));
+            }, function () {
+                $('#divResponse').html("error");
+            });
+        });
+        $('#btnTestPopup').click(function () {
+            var pwd = $('#txtTestPopupPwd').val();
+            nhiicc.PopupAuthHC(pwd, function (data) {
+                console.log(data);
+                $('#divResponse').html(JSON.stringify(data));
+            });
+        });
+		$('#btnTestH_Sign').click(function() {
+			$('#divResponse').html('');
+			nhiicc.H_Sign(function (data) {
+                console.log(data);
+                $('#divResponse').html(JSON.stringify(data));
+            }, function(err) {
+				$('#divResponse').html(err);
+			});
+		});
+    </script>
+</BODY>
+</html>
